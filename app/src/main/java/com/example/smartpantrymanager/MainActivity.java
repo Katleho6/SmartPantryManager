@@ -6,6 +6,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
+import android.content.Intent;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -25,7 +26,8 @@ public class MainActivity extends AppCompatActivity {
 
         Button buttonAddItem = findViewById(R.id.buttonAddItem);
         buttonAddItem.setOnClickListener(v -> {
-            // We will connect this to the Add screen soon
+            Intent intent = new Intent(MainActivity.this, AddEditItemActivity.class);
+            startActivity(intent);
         });
     }
 
