@@ -1,24 +1,56 @@
 package com.example.smartpantrymanager;
 
-import android.os.Bundle;
-
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import android.os.Bundle;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.Toast;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
+
+    private PantryDataSource dataSource;
+    private ListView listViewPantry;
+    private ArrayList<PantryItem> pantryItems;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
+
+        dataSource = new PantryDataSource(this);
+
+        listViewPantry = findViewById(R.id.listViewPantry);
+
+        Button buttonAddItem = findViewById(R.id.buttonAddItem);
+        buttonAddItem.setOnClickListener(v -> {
+            // We will connect this to the Add screen soon
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadPantryItems();
+    }
+
+    private void loadPantryItems() {
+        try {
+            dataSource.open();
+            pantryItems = dataSource.getAllPantryItems();
+            dataSource.close();
+        } catch (Exception e) {
+            Toast.makeText(this, "Could not load pantry items", Toast.LENGTH_LONG).show();
+        }
+
+        ArrayList<String> displayList = new ArrayList<>();
+        for (PantryItem item : pantryItems) {
+            displayList.add(item.getName() + " - " + item.getQuantity() + " " + item.getUnit());
+        }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_list_item_1, displayList);
+        listViewPantry.setAdapter(adapter);
     }
 }
