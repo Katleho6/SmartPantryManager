@@ -99,4 +99,26 @@ public class PantryDataSource {
         }
         return pantryList;
     }
+
+    // Get one specific pantry item by its id
+    public PantryItem getSpecificPantryItem(int itemId) {
+        PantryItem item = new PantryItem();
+        try {
+            String query = "SELECT * FROM pantry_items WHERE _id=" + itemId;
+            Cursor cursor = database.rawQuery(query, null);
+
+            if (cursor.moveToFirst()) {
+                item.setItemId(cursor.getInt(0));
+                item.setName(cursor.getString(1));
+                item.setQuantity(cursor.getDouble(2));
+                item.setUnit(cursor.getString(3));
+                item.setExpiryDate(cursor.getString(4));
+            }
+            cursor.close();
+        }
+        catch (Exception e) {
+            // item stays as a blank new PantryItem if something goes wrong
+        }
+        return item;
+    }
 }

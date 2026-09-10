@@ -2,17 +2,23 @@ package com.example.smartpantrymanager;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 public class AddEditItemActivity extends AppCompatActivity {
 
     private EditText editTextName;
     private EditText editTextQuantity;
-    private EditText editTextUnit;
+    private Spinner spinnerUnit;
     private EditText editTextExpiry;
     private PantryDataSource dataSource;
+    private PantryItem currentItem;
+
+    // The fixed list of units the dropdown will show
+    private String[] unitOptions = {"kg", "g", "L", "ml", "pcs", "cups"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,17 +29,57 @@ public class AddEditItemActivity extends AppCompatActivity {
 
         editTextName = findViewById(R.id.editTextName);
         editTextQuantity = findViewById(R.id.editTextQuantity);
-        editTextUnit = findViewById(R.id.editTextUnit);
+        spinnerUnit = findViewById(R.id.spinnerUnit);
         editTextExpiry = findViewById(R.id.editTextExpiry);
 
         Button buttonSave = findViewById(R.id.buttonSave);
+        Button buttonDelete = findViewById(R.id.buttonDelete);
+
+        // Fill the dropdown with our list of units
+        ArrayAdapter<String> unitAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_dropdown_item, unitOptions);
+        spinnerUnit.setAdapter(unitAdapter);
+
         buttonSave.setOnClickListener(v -> saveItem());
+        buttonDelete.setOnClickListener(v -> deleteItem());
+
+        // Check if we were passed an existing item's id (edit mode)
+        int itemId = getIntent().getIntExtra("itemId", -1);
+
+        if (itemId != -1) {
+            loadExistingItem(itemId);
+        } else {
+            currentItem = new PantryItem();
+            buttonDelete.setVisibility(android.view.View.GONE);
+        }
+    }
+
+    private void loadExistingItem(int itemId) {
+        try {
+            dataSource.open();
+            currentItem = dataSource.getSpecificPantryItem(itemId);
+            dataSource.close();
+
+            editTextName.setText(currentItem.getName());
+            editTextQuantity.setText(String.valueOf(currentItem.getQuantity()));
+            editTextExpiry.setText(currentItem.getExpiryDate());
+
+            // Set the dropdown to show this item's current unit
+            for (int i = 0; i < unitOptions.length; i++) {
+                if (unitOptions[i].equals(currentItem.getUnit())) {
+                    spinnerUnit.setSelection(i);
+                }
+            }
+        }
+        catch (Exception e) {
+            Toast.makeText(this, "Could not load item", Toast.LENGTH_LONG).show();
+        }
     }
 
     private void saveItem() {
         String name = editTextName.getText().toString().trim();
         String quantityText = editTextQuantity.getText().toString().trim();
-        String unit = editTextUnit.getText().toString().trim();
+        String unit = spinnerUnit.getSelectedItem().toString();
         String expiry = editTextExpiry.getText().toString().trim();
 
         if (name.isEmpty()) {
@@ -54,21 +100,37 @@ public class AddEditItemActivity extends AppCompatActivity {
             return;
         }
 
-        PantryItem item = new PantryItem();
-        item.setName(name);
-        item.setQuantity(quantity);
-        item.setUnit(unit);
-        item.setExpiryDate(expiry);
+        currentItem.setName(name);
+        currentItem.setQuantity(quantity);
+        currentItem.setUnit(unit);
+        currentItem.setExpiryDate(expiry);
 
         try {
             dataSource.open();
-            dataSource.insertPantryItem(item);
+            if (currentItem.getItemId() == -1) {
+                dataSource.insertPantryItem(currentItem);
+            } else {
+                dataSource.updatePantryItem(currentItem);
+            }
             dataSource.close();
             Toast.makeText(this, "Ingredient saved", Toast.LENGTH_SHORT).show();
             finish();
         }
         catch (Exception e) {
             Toast.makeText(this, "Could not save ingredient", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void deleteItem() {
+        try {
+            dataSource.open();
+            dataSource.deletePantryItem(currentItem.getItemId());
+            dataSource.close();
+            Toast.makeText(this, "Ingredient deleted", Toast.LENGTH_SHORT).show();
+            finish();
+        }
+        catch (Exception e) {
+            Toast.makeText(this, "Could not delete ingredient", Toast.LENGTH_LONG).show();
         }
     }
 }

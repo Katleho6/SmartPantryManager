@@ -1,12 +1,12 @@
 package com.example.smartpantrymanager;
 
 import androidx.appcompat.app.AppCompatActivity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
-import android.content.Intent;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -29,6 +29,15 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, AddEditItemActivity.class);
             startActivity(intent);
         });
+
+        // When a list item is tapped, open it for editing
+        listViewPantry.setOnItemClickListener((parent, view, position, id) -> {
+            PantryItem selectedItem = pantryItems.get(position);
+
+            Intent intent = new Intent(MainActivity.this, AddEditItemActivity.class);
+            intent.putExtra("itemId", selectedItem.getItemId());
+            startActivity(intent);
+        });
     }
 
     @Override
@@ -42,7 +51,8 @@ public class MainActivity extends AppCompatActivity {
             dataSource.open();
             pantryItems = dataSource.getAllPantryItems();
             dataSource.close();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             Toast.makeText(this, "Could not load pantry items", Toast.LENGTH_LONG).show();
         }
 
