@@ -1,18 +1,20 @@
 package com.example.smartpantrymanager;
 
 import androidx.appcompat.app.AppCompatActivity;
+import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.Toast;
+import java.util.Calendar;
 
 public class AddEditItemActivity extends AppCompatActivity {
 
     private EditText editTextName;
     private EditText editTextQuantity;
-    private Spinner spinnerUnit;
+    private AutoCompleteTextView dropdownUnit;
     private EditText editTextExpiry;
     private PantryDataSource dataSource;
     private PantryItem currentItem;
@@ -29,7 +31,7 @@ public class AddEditItemActivity extends AppCompatActivity {
 
         editTextName = findViewById(R.id.editTextName);
         editTextQuantity = findViewById(R.id.editTextQuantity);
-        spinnerUnit = findViewById(R.id.spinnerUnit);
+        dropdownUnit = findViewById(R.id.dropdownUnit);
         editTextExpiry = findViewById(R.id.editTextExpiry);
 
         Button buttonSave = findViewById(R.id.buttonSave);
@@ -37,8 +39,10 @@ public class AddEditItemActivity extends AppCompatActivity {
 
         // Fill the dropdown with our list of units
         ArrayAdapter<String> unitAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_dropdown_item, unitOptions);
-        spinnerUnit.setAdapter(unitAdapter);
+                android.R.layout.simple_list_item_1, unitOptions);
+        dropdownUnit.setAdapter(unitAdapter);
+
+        editTextExpiry.setOnClickListener(v -> openDatePicker());
 
         buttonSave.setOnClickListener(v -> saveItem());
         buttonDelete.setOnClickListener(v -> deleteItem());
@@ -54,6 +58,32 @@ public class AddEditItemActivity extends AppCompatActivity {
         }
     }
 
+    private void openDatePicker() {
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this,
+                (view, selectedYear, selectedMonth, selectedDay) -> {
+                    // Month is 0-based in Android, so we add 1 for a normal calendar month
+                    String monthText = String.valueOf(selectedMonth + 1);
+                    if (monthText.length() == 1) {
+                        monthText = "0" + monthText;
+                    }
+                    String dayText = String.valueOf(selectedDay);
+                    if (dayText.length() == 1) {
+                        dayText = "0" + dayText;
+                    }
+
+                    String pickedDate = selectedYear + "-" + monthText + "-" + dayText;
+                    editTextExpiry.setText(pickedDate);
+                },
+                year, month, day);
+
+        datePickerDialog.show();
+    }
+
     private void loadExistingItem(int itemId) {
         try {
             dataSource.open();
@@ -63,13 +93,7 @@ public class AddEditItemActivity extends AppCompatActivity {
             editTextName.setText(currentItem.getName());
             editTextQuantity.setText(String.valueOf(currentItem.getQuantity()));
             editTextExpiry.setText(currentItem.getExpiryDate());
-
-            // Set the dropdown to show this item's current unit
-            for (int i = 0; i < unitOptions.length; i++) {
-                if (unitOptions[i].equals(currentItem.getUnit())) {
-                    spinnerUnit.setSelection(i);
-                }
-            }
+            dropdownUnit.setText(currentItem.getUnit(), false);
         }
         catch (Exception e) {
             Toast.makeText(this, "Could not load item", Toast.LENGTH_LONG).show();
@@ -79,7 +103,7 @@ public class AddEditItemActivity extends AppCompatActivity {
     private void saveItem() {
         String name = editTextName.getText().toString().trim();
         String quantityText = editTextQuantity.getText().toString().trim();
-        String unit = spinnerUnit.getSelectedItem().toString();
+        String unit = dropdownUnit.getText().toString().trim();
         String expiry = editTextExpiry.getText().toString().trim();
 
         if (name.isEmpty()) {
