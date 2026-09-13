@@ -22,6 +22,16 @@ public class MainActivity extends AppCompatActivity {
 
         dataSource = new PantryDataSource(this);
 
+        try {
+            RecipeDataSource recipeDataSource = new RecipeDataSource(this);
+            recipeDataSource.open();
+            recipeDataSource.seedRecipesIfEmpty();
+            recipeDataSource.close();
+        }
+        catch (Exception e) {
+            Toast.makeText(this, "Could not load recipes", Toast.LENGTH_LONG).show();
+        }
+
         listViewPantry = findViewById(R.id.listViewPantry);
 
         Button buttonAddItem = findViewById(R.id.buttonAddItem);
