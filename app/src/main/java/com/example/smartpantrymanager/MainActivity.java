@@ -46,6 +46,12 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+        Button buttonSettings = findViewById(R.id.buttonSettings);
+        buttonSettings.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+            startActivity(intent);
+        });
+
         // When a list item is tapped, open it for editing
         listViewPantry.setOnItemClickListener((parent, view, position, id) -> {
             PantryItem selectedItem = pantryItems.get(position);
@@ -74,11 +80,16 @@ public class MainActivity extends AppCompatActivity {
 
         ArrayList<String> displayList = new ArrayList<>();
         for (PantryItem item : pantryItems) {
-            displayList.add(item.getName() + " - " + item.getQuantity() + " " + item.getUnit());
+            String formattedQuantity = formatQuantity(item.getQuantity(), item.getUnit());
+            displayList.add(item.getName() + " - " + formattedQuantity + " " + item.getUnit());
         }
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1, displayList);
         listViewPantry.setAdapter(adapter);
+    }
+
+    private String formatQuantity(double quantity, String unit) {
+        return String.valueOf((int) quantity);
     }
 }

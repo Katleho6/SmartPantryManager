@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
+import android.content.Intent;
 import java.util.ArrayList;
 
 public class SuggestedRecipesActivity extends AppCompatActivity {
@@ -25,6 +26,19 @@ public class SuggestedRecipesActivity extends AppCompatActivity {
         listViewSuggestedRecipes = findViewById(R.id.listViewSuggestedRecipes);
 
         findSuggestedRecipes();
+
+        listViewSuggestedRecipes.setOnItemClickListener((parent, view, position, id) -> {
+            if (matchingRecipes.isEmpty()) {
+                return;
+            }
+            Recipe selectedRecipe = matchingRecipes.get(position);
+
+            Intent intent = new Intent(SuggestedRecipesActivity.this, RecipeDetailActivity.class);
+            intent.putExtra("recipeId", selectedRecipe.getRecipeId());
+            intent.putExtra("recipeName", selectedRecipe.getName());
+            intent.putExtra("recipeSteps", selectedRecipe.getSteps());
+            startActivity(intent);
+        });
     }
 
     private void findSuggestedRecipes() {
