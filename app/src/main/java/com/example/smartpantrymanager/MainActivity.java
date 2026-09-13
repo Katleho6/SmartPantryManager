@@ -40,6 +40,12 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+        Button buttonSuggestedRecipes = findViewById(R.id.buttonSuggestedRecipes);
+        buttonSuggestedRecipes.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, SuggestedRecipesActivity.class);
+            startActivity(intent);
+        });
+
         // When a list item is tapped, open it for editing
         listViewPantry.setOnItemClickListener((parent, view, position, id) -> {
             PantryItem selectedItem = pantryItems.get(position);
