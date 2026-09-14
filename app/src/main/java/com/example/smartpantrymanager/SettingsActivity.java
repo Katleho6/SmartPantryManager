@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Switch;
+import android.widget.ImageButton;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -18,6 +19,8 @@ public class SettingsActivity extends AppCompatActivity {
         preferences = getSharedPreferences("SmartPantryPrefs", MODE_PRIVATE);
 
         switchExpiryAlerts = findViewById(R.id.switchExpiryAlerts);
+        ImageButton buttonBack = findViewById(R.id.buttonBack);
+        buttonBack.setOnClickListener(v -> finish());
 
         // Load the saved setting, defaulting to "on" if never set before
         boolean alertsEnabled = preferences.getBoolean("expiryAlertsEnabled", true);

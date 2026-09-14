@@ -5,6 +5,7 @@ import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.ImageButton;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -33,6 +34,8 @@ public class AddEditItemActivity extends AppCompatActivity {
         editTextQuantity = findViewById(R.id.editTextQuantity);
         dropdownUnit = findViewById(R.id.dropdownUnit);
         editTextExpiry = findViewById(R.id.editTextExpiry);
+        ImageButton buttonBack = findViewById(R.id.buttonBack);
+        buttonBack.setOnClickListener(v -> finish());
 
         Button buttonSave = findViewById(R.id.buttonSave);
         Button buttonDelete = findViewById(R.id.buttonDelete);

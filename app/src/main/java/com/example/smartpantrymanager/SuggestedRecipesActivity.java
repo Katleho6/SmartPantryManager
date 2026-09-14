@@ -3,6 +3,7 @@ package com.example.smartpantrymanager;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 import android.content.Intent;
@@ -24,6 +25,8 @@ public class SuggestedRecipesActivity extends AppCompatActivity {
         recipeDataSource = new RecipeDataSource(this);
 
         listViewSuggestedRecipes = findViewById(R.id.listViewSuggestedRecipes);
+        ImageButton buttonBack = findViewById(R.id.buttonBack);
+        buttonBack.setOnClickListener(v -> finish());
 
         findSuggestedRecipes();
 

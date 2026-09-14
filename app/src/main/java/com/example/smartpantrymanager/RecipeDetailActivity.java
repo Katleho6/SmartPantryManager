@@ -3,6 +3,7 @@ package com.example.smartpantrymanager;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
+import android.widget.ImageButton;
 import android.widget.Toast;
 import java.util.ArrayList;
 
@@ -23,6 +24,9 @@ public class RecipeDetailActivity extends AppCompatActivity {
         textViewRecipeName = findViewById(R.id.textViewRecipeName);
         textViewIngredients = findViewById(R.id.textViewIngredients);
         textViewSteps = findViewById(R.id.textViewSteps);
+
+        ImageButton buttonBack = findViewById(R.id.buttonBack);
+        buttonBack.setOnClickListener(v -> finish());
 
         int recipeId = getIntent().getIntExtra("recipeId", -1);
         String recipeName = getIntent().getStringExtra("recipeName");
