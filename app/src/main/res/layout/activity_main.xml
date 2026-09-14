@@ -18,7 +18,8 @@
             android:layout_height="wrap_content"
             android:text="My Pantry"
             android:textSize="24sp"
-            android:layout_marginBottom="16dp" />
+            android:layout_marginBottom="16dp"
+            android:textColor="@color/dark_charcoal"/>
 
         <Button
             android:id="@+id/buttonAddItem"

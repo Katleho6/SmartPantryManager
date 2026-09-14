@@ -10,12 +10,15 @@
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Ingredient Name">
+        android:hint="Ingredient Name"
+        app:hintTextColor="@color/hint_grey"
+        android:textColorHint="@color/hint_grey">>
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/editTextName"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:textColor="@color/dark_charcoal"/>
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -23,13 +26,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:hint="Quantity">
+        android:hint="Quantity"
+        app:hintTextColor="@color/hint_grey"
+        android:textColorHint="@color/hint_grey">>
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/editTextQuantity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="numberDecimal" />
+            android:inputType="number"
+            android:textColor="@color/dark_charcoal"/>
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -38,13 +44,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:hint="Unit">
+        android:hint="Unit"
+        app:hintTextColor="@color/hint_grey"
+        android:textColorHint="@color/hint_grey">>
 
         <AutoCompleteTextView
             android:id="@+id/dropdownUnit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="none" />
+            android:inputType="none"
+            android:textColor="@color/dark_charcoal"/>
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -52,7 +61,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:hint="Expiry Date (optional)">
+        android:hint="Expiry Date (optional)"
+        app:hintTextColor="@color/hint_grey"
+        android:textColorHint="@color/hint_grey">>
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/editTextExpiry"
@@ -60,7 +71,8 @@
             android:layout_height="wrap_content"
             android:focusable="false"
             android:clickable="true"
-            android:cursorVisible="false" />
+            android:cursorVisible="false"
+            android:textColor="@color/dark_charcoal"/>
 
     </com.google.android.material.textfield.TextInputLayout>
 
