@@ -1,6 +1,7 @@
 package com.example.smartpantrymanager;
 
 import androidx.appcompat.app.AppCompatActivity;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
@@ -40,16 +41,24 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        Button buttonSuggestedRecipes = findViewById(R.id.buttonSuggestedRecipes);
-        buttonSuggestedRecipes.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, SuggestedRecipesActivity.class);
-            startActivity(intent);
-        });
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
 
-        Button buttonSettings = findViewById(R.id.buttonSettings);
-        buttonSettings.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
-            startActivity(intent);
+            if (itemId == R.id.nav_recipes) {
+                Intent intent = new Intent(MainActivity.this, SuggestedRecipesActivity.class);
+                startActivity(intent);
+                return true;
+            }
+            else if (itemId == R.id.nav_settings) {
+                Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+                startActivity(intent);
+                return true;
+            }
+            else {
+                // nav_pantry - already on this screen, do nothing
+                return true;
+            }
         });
 
         // When a list item is tapped, open it for editing
