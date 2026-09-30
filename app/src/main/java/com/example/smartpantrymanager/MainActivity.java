@@ -3,6 +3,10 @@ package com.example.smartpantrymanager;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -87,15 +91,43 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "Could not load pantry items", Toast.LENGTH_LONG).show();
         }
 
-        ArrayList<String> displayList = new ArrayList<>();
+        SharedPreferences preferences = getSharedPreferences("SmartPantryPrefs", MODE_PRIVATE);
+        boolean alertsEnabled = preferences.getBoolean("expiryAlertsEnabled", true);
+
+        ArrayList<String> detailsList = new ArrayList<>();
+        ArrayList<Boolean> expiringSoonFlags = new ArrayList<>();
+
         for (PantryItem item : pantryItems) {
             String formattedQuantity = formatQuantity(item.getQuantity(), item.getUnit());
-            displayList.add(item.getName() + " - " + formattedQuantity + " " + item.getUnit());
+            detailsList.add(item.getName() + " - " + formattedQuantity + " " + item.getUnit());
+
+            boolean isExpiring = alertsEnabled && isExpiringSoon(item.getExpiryDate());
+            expiringSoonFlags.add(isExpiring);
         }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, displayList);
+        PantryListAdapter adapter = new PantryListAdapter(this, detailsList, expiringSoonFlags);
         listViewPantry.setAdapter(adapter);
+    }
+
+    // Checks if a date string (YYYY-MM-DD) is today or within the next 3 days
+    private boolean isExpiringSoon(String expiryDate) {
+        if (expiryDate == null || expiryDate.isEmpty()) {
+            return false;
+        }
+
+        try {
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            Date expiry = format.parse(expiryDate);
+            Date today = new Date();
+
+            long millisecondsUntilExpiry = expiry.getTime() - today.getTime();
+            long daysUntilExpiry = millisecondsUntilExpiry / (1000 * 60 * 60 * 24);
+
+            return daysUntilExpiry >= 0 && daysUntilExpiry <= 3;
+        }
+        catch (Exception e) {
+            return false;
+        }
     }
 
     private String formatQuantity(double quantity, String unit) {
